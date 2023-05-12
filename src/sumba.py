@@ -7,12 +7,12 @@ from PIL import Image, ImageDraw as D
 import random as rng
 import cv2
 
-from src.detector import (
+from src.detection import (
     YoloV5ObjectDetection,
     YoloV8ObjectDetection,
     DETRObjectDetection,
 )
-from src.segmentator import MaskFormerSegmentation
+from src.segmentation import MaskFormerSegmentation
 from src.grasping import GraspDetection
 import warnings
 
@@ -37,6 +37,8 @@ class Sumba:
         rng.seed(12345)
 
         self.show = show
+
+        # Deprecated
         self.detector_one_object = detector_one_object
 
         print(detector_id)
@@ -81,7 +83,7 @@ class Sumba:
         )
         raise Exception("Please select valid model configuration")
 
-    def run_pipeline(self, image):
+    def run_pipeline(self, image, detector_one_object):
 
         # Step 0: Initizalize
         print("")
@@ -96,7 +98,7 @@ class Sumba:
         # ------------------------------------------------------------
         # -------------------- OBJECT DETECTION
         # ------------------------------------------------------------
-        objects = self.detector.detect_all_objects(image, self.detector_one_object)
+        objects = self.detector.detect_all_objects(image, detector_one_object)
 
         for object_raw in objects:
 
