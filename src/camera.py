@@ -74,7 +74,7 @@ class Camera:
         obj_d = np.min(sliced_d[sliced_d != 0])
         table_d = min(np.max(sliced_d), self.DEFAULT_HEIGHT)
 
-        print("Trying to grasp", o[0])
+        print("Trying to grasp", object[0])
         print(table_d, obj_d)
         print("Object height:", table_d - obj_d)
 
