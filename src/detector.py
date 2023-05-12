@@ -9,15 +9,46 @@ from transformers import (
     DetrImageProcessor,
     DetrForObjectDetection,
 )
-
+from ultralytics import YOLO
+import ultralytics
 
 ##########################################################################################
 ##########################################################################################
 
-
-class YoloObjectDetection:
+# WORK IN PROGRESS
+class YoloV8ObjectDetection:
     def __init__(self, th, show):
-        print("[DETECTION] - Using YoloV5 Object Detection Backend")
+        print("[EXPERIMENTAL] - [DETECTION] - Using Yolo V8 Object Detection Backend")
+        ultralytics.checks()
+        self.show = show
+        self.th = th
+        self.model = YOLO("yolov8n.pt")
+
+    def detect_all_objects(self, image, one_object):
+        # Step 1: Detect all objects in image
+        object_boxes = self.detect_objects_in_images(image)
+        pass
+
+    def detect_objects_in_images(self, image):
+        results = self.model.predict(source=image)
+        print(len(results))
+        results[0].boxes
+        return results
+
+    def crop_objects_found(self, image, boxes):
+        pass
+
+    def plot_results(self, pil_img, boxes):
+        pass
+
+
+##########################################################################################
+##########################################################################################
+
+
+class YoloV5ObjectDetection:
+    def __init__(self, th, show):
+        print("[DETECTION] - Using Yolo V5 Object Detection Backend")
         self.show = show
         self.th = th
         self.processor = YolosFeatureExtractor.from_pretrained("hustvl/yolos-small")
