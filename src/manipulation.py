@@ -36,11 +36,16 @@ def move_gripper(pos):
 
 class Manipulator:
     def __init__(self):
+
+        self.open_gripper = 0
+        self.close_gripper = 1
+        self.home = [0, -0.3, 0.3, 0, 70, 0]
+        self.upper_box = [-0.3, -0.45, 0.2, 0, 50, -40]
+        self.lower_box = [-0.3, -0.45, 0.4, 0, 50, -40]
         pass
 
     def execute_manipulation(self, result, ang):
         pose = list(result) + [ang, 50, 0]
-
         above_pose = pose.copy()
         above_pose[2] -= 0.10
 
@@ -48,16 +53,16 @@ class Manipulator:
 
         go_to(pose)
 
-        move_gripper(1)
+        move_gripper(self.close_gripper)
 
-        go_to([0, -0.3, 0.3, 0, 70, 0])
+        go_to(self.home)
 
-        go_to([-0.3, -0.45, 0.2, 0, 50, -40])
+        go_to(self.upper_box)
 
-        go_to([-0.3, -0.45, 0.4, 0, 50, -40])
+        go_to(self.lower_box)
 
-        move_gripper(0)
+        move_gripper(self.open_gripper)
 
-        go_to([-0.3, -0.45, 0.2, 0, 50, -40])
+        go_to(self.upper_box)
 
-        go_to([0, -0.3, 0.3, 0, 70, 0])
+        go_to(self.home)

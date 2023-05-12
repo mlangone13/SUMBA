@@ -36,9 +36,9 @@ def run_demo(manipulator, camera, sumba):
 
             print(" ******* Running pipeline with multiple image taken *******")
 
-            have_objects = True
+            more_objects = True
 
-            while have_objects:
+            while more_objects:
 
                 color_image, depth_image = camera.get_frame()
                 img = camera.change_channel(color_image)
@@ -49,7 +49,7 @@ def run_demo(manipulator, camera, sumba):
                     result, ang = camera.project_points(object, depth_image)
                     manipulator.execute_manipulation(result, ang)
 
-                have_objects = len(points) > 0
+                more_objects = len(points) > 0
 
         else:
             print(" Select another key to continue...")
