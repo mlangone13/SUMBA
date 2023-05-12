@@ -22,18 +22,18 @@ class Sumba:
     def __init__(
         self,
         detector_id="yolov5",
-        segmentator_id="maskformer",
-        N=50,
-        tol=5,
         detector_th=0.9,
-        one_object=False,
+        detector_one_object=False,
+        segmentator_id="maskformer",
+        grasping_N=50,
+        grasping_tol=5,
         show=True,
     ):
 
         rng.seed(12345)
 
         self.show = show
-        self.one_object = one_object
+        self.detector_one_object = detector_one_object
 
         if detector_id == "yolov5":
             self.detector = YoloObjectDetection(detector_th, show)
@@ -47,10 +47,12 @@ class Sumba:
         else:
             self.show_valid_models()
 
-        if (N < 10 or N > 100) or (tol < 5 or tol > 50):
+        if (grasping_N < 10 or grasping_N > 100) or (
+            grasping_tol < 5 or grasping_tol > 50
+        ):
             self.show_valid_models()
         else:
-            self.grasp = GraspDetection(show, N, tol)
+            self.grasp = GraspDetection(show, grasping_N, grasping_tol)
 
     def show_valid_models(self):
         print(
@@ -59,13 +61,15 @@ class Sumba:
 
         Detector Module:
             - detector_id = ['yolov5','detr']
+            - detector_th = [0...1]
+            - detector_one_object = [True, False]
 
         Segmentator Module:
             - segmentator_id = ['maskformer']
 
         Grasping Module:
-            - N   = [10...100]
-            - tol = [5 ...50]
+            - grasping_N   = [10...100]
+            - grasping_tol = [5 ...50]
         """
         )
         raise Exception("Please select valid model configuration")
@@ -85,7 +89,7 @@ class Sumba:
         # ------------------------------------------------------------
         # -------------------- OBJECT DETECTION
         # ------------------------------------------------------------
-        objects = self.detector.detect_all_objects(image, self.one_object)
+        objects = self.detector.detect_all_objects(image, self.detector_one_object)
 
         for object_raw in objects:
 
