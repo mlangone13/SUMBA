@@ -39,9 +39,10 @@ class Sumba:
         self.show = show
         self.detector_one_object = detector_one_object
 
+        print(detector_id)
         if detector_id == "yolov5":
             self.detector = YoloV5ObjectDetection(detector_th, show)
-        if detector_id == "yolov8":
+        elif detector_id == "yolov8":
             self.detector = YoloV8ObjectDetection(detector_th, show)
         elif detector_id == "detr":
             self.detector = DETRObjectDetection(detector_th, show)

@@ -1,11 +1,50 @@
 from src.sumba import Sumba
 from PIL import Image
 
+
+import os
 import pyrealsense2 as rs
 import numpy as np
 import cv2
 import time
 
+POSE_FILE           = '/home/guille/catkin_ws/src/arm_controller_g/dest_pose.arm'
+GRIPPER_FILE        = '/home/guille/catkin_ws/src/arm_controller_g/gripper_pose.arm'
+ARM_SIGNAL_FILE     = '/home/guille/catkin_ws/src/arm_controller_g/arm_signal.arm'
+GRIPPER_SIGNAL_FILE = '/home/guille/catkin_ws/src/arm_controller_g/gripper_signal.arm'
+
+def go_to (new_pos):
+    f = open(POSE_FILE, 'w')
+    data = ""
+    for i in new_pos:
+        data += str(i) + ","
+    f.write(data[:-1])
+    f.close()
+
+    originalTime = os.path.getmtime(ARM_SIGNAL_FILE)
+    while(os.path.getmtime(ARM_SIGNAL_FILE) == originalTime):
+        pass
+    time.sleep(0.1)
+
+def move_gripper (pos):
+    f = open(GRIPPER_FILE, 'w')
+    f.write(str(pos))
+    f.close()
+
+    originalTime = os.path.getmtime(GRIPPER_SIGNAL_FILE)
+    while(os.path.getmtime(GRIPPER_SIGNAL_FILE) == originalTime):
+        pass
+    time.sleep(0.1)
+
+sumba = Sumba(
+        detector_id="detr",
+        detector_th=0.9,
+        detector_one_object=False,
+        segmentator_id="maskformer",
+        grasping_N=50,
+        grasping_tol=5,
+        show=True,
+)
 
 
 HAND_CAMERA_SN = '037322251488'
@@ -53,17 +92,6 @@ color_image = np.asanyarray(color_frame.get_data())
 img = Image.fromarray(color_image[:,:,::-1])
 
 
-sumba = Sumba(
-        detector_id="yolov5",
-        detector_th=0.9,
-        detector_one_object=False,
-        segmentator_id="maskformer",
-        grasping_N=50,
-        grasping_tol=5,
-        show=True,
-)
-
-
 points = sumba.run_pipeline(img) 
 print (points)
 
@@ -76,7 +104,12 @@ DEFAULT_HEIGHT = 535
 for o in points:
 
     x, y, x1, y1 = o[1]
-    ang = np.degrees(np.arctan((abs(y-y1)/abs(x-x1))))
+    ang = np.degrees(np.arctan(abs(y-y1)/abs(x-x1)))
+    
+    if x > x1:
+        print ("invirtiendo")
+        ang *= -1
+
     cx, cy = int((x+x1)/2), int((y+y1)/2)
 
     x, y, x1, y1 = o[2]
@@ -95,58 +128,20 @@ for o in points:
     result = rs.rs2_deproject_pixel_to_point(intr, [cx, cy], d_f)
     pose = list(result) + [ang, 70, 0]
 
-    print ("Dest pose", pose)
-
-    if (input() != "g"):
-        continue
-    
-    f = open("/home/guille/catkin_ws/src/arm_controller_g/dest_pose.arm", 'w')
     above_pose = pose.copy()
     above_pose[2] -= 0.10
-    data = ""
-    for i in above_pose:
-        data += str(i) + ","
-    print ("above", data)
-    f.write(data[:-1])
-    f.close()
+    go_to(above_pose)
+    
+    go_to(pose)
 
-    time.sleep(5)
+    move_gripper(1)
 
-    f = open("/home/guille/catkin_ws/src/arm_controller_g/dest_pose.arm", 'w')
-    data = ""
-    for i in pose:
-        data += str(i) + ","
-    f.write(data[:-1])
-    f.close()
+    go_to([0, -0.3, 0.3, 0, 70, 0])
 
-    time.sleep(2)
+    go_to([-0.3, -0.45, 0.2, 0, 50, -40])
 
-    f = open("/home/guille/catkin_ws/src/arm_controller_g/gripper_pose.arm", 'w')
-    f.write("1")
-    f.close()
+    go_to([-0.3, -0.45, 0.4, 0, 50, -40])
 
-    time.sleep(5)
+    move_gripper(0)
 
-    f = open("/home/guille/catkin_ws/src/arm_controller_g/dest_pose.arm", 'w')
-    f.write("0, -0.3, 0.3, 0, 70, 0")
-    f.close()
-
-    time.sleep(5)
-
-    # f = open("/home/guille/catkin_ws/src/arm_controller_g/dest_pose.arm", 'w')
-    # f.write("0.3, -0.4, 0.4, 0, 70, 0")
-    # f.close()
-
-    # time.sleep(5)
-
-    f = open("/home/guille/catkin_ws/src/arm_controller_g/gripper_pose.arm", 'w')
-    f.write("0.0")
-    f.close()
-
-    time.sleep(5)
-
-    # f = open("/home/guille/catkin_ws/src/arm_controller_g/dest_pose.arm", 'w')
-    # f.write("0, -0.3, 0.3, 0, 70, 0")
-    # f.close()
-
-    # time.sleep(5)
+    go_to([0, -0.3, 0.3, 0, 70, 0])
