@@ -21,6 +21,7 @@ def go_to (new_pos):
     f.write(data[:-1])
     f.close()
 
+    time.sleep(0.01)
     originalTime = os.path.getmtime(ARM_SIGNAL_FILE)
     while(os.path.getmtime(ARM_SIGNAL_FILE) == originalTime):
         pass
@@ -31,6 +32,7 @@ def move_gripper (pos):
     f.write(str(pos))
     f.close()
 
+    time.sleep(0.1)
     originalTime = os.path.getmtime(GRIPPER_SIGNAL_FILE)
     while(os.path.getmtime(GRIPPER_SIGNAL_FILE) == originalTime):
         pass
@@ -38,7 +40,7 @@ def move_gripper (pos):
 
 sumba = Sumba(
         detector_id="detr",
-        detector_th=0.9,
+        detector_th=0.8,
         detector_one_object=False,
         segmentator_id="maskformer",
         grasping_N=50,
@@ -126,7 +128,7 @@ for o in points:
     d_f = np.mean([table_d, obj_d])/1000
 
     result = rs.rs2_deproject_pixel_to_point(intr, [cx, cy], d_f)
-    pose = list(result) + [ang, 70, 0]
+    pose = list(result) + [ang, 50, 0]
 
     above_pose = pose.copy()
     above_pose[2] -= 0.10
@@ -143,5 +145,7 @@ for o in points:
     go_to([-0.3, -0.45, 0.4, 0, 50, -40])
 
     move_gripper(0)
+
+    go_to([-0.3, -0.45, 0.2, 0, 50, -40])
 
     go_to([0, -0.3, 0.3, 0, 70, 0])
