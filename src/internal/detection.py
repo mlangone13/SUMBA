@@ -1,6 +1,3 @@
-#%matplotlib inline
-#%matplotlib notebook
-
 import torch
 from PIL import ImageDraw as D
 from transformers import (

@@ -1,6 +1,6 @@
-from src.sumba import Sumba
-from src.manipulation import Manipulator
-from src.camera import Camera
+from src.internal.sumba import Sumba
+from src.external.manipulation import Manipulator
+from src.external.camera import Camera
 
 
 def print_initial_configuration():

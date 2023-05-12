@@ -1,6 +1,3 @@
-#%matplotlib inline
-#%matplotlib notebook
-
 import torch
 import numpy as np
 from matplotlib import cm

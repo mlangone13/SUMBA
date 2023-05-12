@@ -3,13 +3,13 @@ from PIL import Image
 import random as rng
 import cv2
 
-from src.detection import (
+from internal.detection import (
     YoloV5ObjectDetection,
     YoloV8ObjectDetection,
     DETRObjectDetection,
 )
-from src.segmentation import MaskFormerSegmentation
-from src.grasping import GraspDetection
+from src.internal.segmentation import MaskFormerSegmentation
+from src.internal.grasping import GraspDetection
 import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
