@@ -1,9 +1,5 @@
-#%matplotlib inline
-#%matplotlib notebook
-
-
 import numpy as np
-from PIL import Image, ImageDraw as D
+from PIL import Image
 import random as rng
 import cv2
 

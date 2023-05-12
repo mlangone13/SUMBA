@@ -1,5 +1,4 @@
 import os
-import cv2
 import time
 
 POSE_FILE = "/home/guille/catkin_ws/src/arm_controller_g/dest_pose.arm"

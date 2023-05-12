@@ -1,5 +1,3 @@
-import numpy as np
-import pyrealsense2 as rs
 from src.sumba import Sumba
 from src.manipulation import Manipulator
 from src.camera import Camera
