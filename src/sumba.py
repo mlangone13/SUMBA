@@ -20,17 +20,25 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 
 class Sumba:
     def __init__(
-        self, detector_id="yolov5", segmentator_id="maskformer", N=50, tol=5, show=True
+        self,
+        detector_id="yolov5",
+        segmentator_id="maskformer",
+        N=50,
+        tol=5,
+        detector_th=0.9,
+        one_object=False,
+        show=True,
     ):
 
         rng.seed(12345)
 
         self.show = show
+        self.one_object = one_object
 
         if detector_id == "yolov5":
-            self.detector = YoloObjectDetection(show)
+            self.detector = YoloObjectDetection(detector_th, show)
         elif detector_id == "detr":
-            self.detector = DETRObjectDetection(show)
+            self.detector = DETRObjectDetection(detector_th, show)
         else:
             self.show_valid_models()
 
@@ -77,7 +85,7 @@ class Sumba:
         # ------------------------------------------------------------
         # -------------------- OBJECT DETECTION
         # ------------------------------------------------------------
-        objects = self.detector.detect_all_objects(image)
+        objects = self.detector.detect_all_objects(image, self.one_object)
 
         for object_raw in objects:
 

@@ -15,6 +15,7 @@ from transformers import MaskFormerImageProcessor, MaskFormerForInstanceSegmenta
 
 class MaskFormerSegmentation:
     def __init__(self, show):
+        print("[SEGMENTATION] - Using MaskFormer Segmentation Backend")
         self.show = show
         # load MaskFormer fine-tuned on COCO panoptic segmentation
         self.feature_extractor = MaskFormerImageProcessor.from_pretrained(

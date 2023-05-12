@@ -14,6 +14,7 @@ from PIL import Image
 
 class GraspDetection:
     def __init__(self, show, N, tol):
+        print(f"[GRASPING] - Using N={N} and tol={tol}")
         self.show = show
         self.N = N
         self.tol = tol
