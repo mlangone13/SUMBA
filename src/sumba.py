@@ -7,7 +7,11 @@ from PIL import Image, ImageDraw as D
 import random as rng
 import cv2
 
-from src.detector import YoloObjectDetection, DETRObjectDetection
+from src.detector import (
+    YoloV5ObjectDetection,
+    YoloV8ObjectDetection,
+    DETRObjectDetection,
+)
 from src.segmentator import MaskFormerSegmentation
 from src.grasping import GraspDetection
 import warnings
@@ -36,7 +40,9 @@ class Sumba:
         self.detector_one_object = detector_one_object
 
         if detector_id == "yolov5":
-            self.detector = YoloObjectDetection(detector_th, show)
+            self.detector = YoloV5ObjectDetection(detector_th, show)
+        if detector_id == "yolov8":
+            self.detector = YoloV8ObjectDetection(detector_th, show)
         elif detector_id == "detr":
             self.detector = DETRObjectDetection(detector_th, show)
         else:
