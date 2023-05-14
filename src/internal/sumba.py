@@ -3,12 +3,12 @@ from PIL import Image
 import random as rng
 import cv2
 
-from internal.detection import (
+from src.internal.detection import (
     YoloV5ObjectDetection,
     YoloV8ObjectDetection,
     DETRObjectDetection,
 )
-from src.internal.segmentation import MaskFormerSegmentation
+from src.internal.segmentation import MaskFormerSegmentation, YoloV8Segmentation
 from src.internal.grasping import GraspDetection
 import warnings
 
@@ -23,8 +23,9 @@ class Sumba:
         self,
         detector_id="yolov5",
         detector_th=0.9,
-        detector_one_object=False,
+        detector_max_object_size=0.5,
         segmentator_id="maskformer",
+        segmentator_min_mask_size=0.5,
         grasping_N=50,
         grasping_tol=5,
         show=True,
@@ -34,21 +35,25 @@ class Sumba:
 
         self.show = show
 
-        # Deprecated
-        self.detector_one_object = detector_one_object
-
-        print(detector_id)
         if detector_id == "yolov5":
-            self.detector = YoloV5ObjectDetection(detector_th, show)
+            self.detector = YoloV5ObjectDetection(
+                detector_th, detector_max_object_size, show
+            )
         elif detector_id == "yolov8":
-            self.detector = YoloV8ObjectDetection(detector_th, show)
+            self.detector = YoloV8ObjectDetection(
+                detector_th, detector_max_object_size, show
+            )
         elif detector_id == "detr":
-            self.detector = DETRObjectDetection(detector_th, show)
+            self.detector = DETRObjectDetection(
+                detector_th, detector_max_object_size, show
+            )
         else:
             self.show_valid_models()
 
         if segmentator_id == "maskformer":
-            self.segmentator = MaskFormerSegmentation(show)
+            self.segmentator = MaskFormerSegmentation(segmentator_min_mask_size, show)
+        elif segmentator_id == "yolov8":
+            self.segmentator = YoloV8Segmentation(segmentator_min_mask_size, show)
         else:
             self.show_valid_models()
 
@@ -65,12 +70,13 @@ class Sumba:
         Please select any of the following options for our pipeline -->
 
         Detector Module:
-            - detector_id = ['yolov5','detr']
+            - detector_id = ['yolov5','yolov8','detr']
             - detector_th = [0...1]
-            - detector_one_object = [True, False]
+            - detector_max_object_size = [0...1]
 
         Segmentator Module:
-            - segmentator_id = ['maskformer']
+            - segmentator_id = ['yolov8', 'maskformer']
+            - segmentator_min_mask_size = [0...1]
 
         Grasping Module:
             - grasping_N   = [10...100]

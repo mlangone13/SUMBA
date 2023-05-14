@@ -9,45 +9,108 @@ from transformers import (
 from ultralytics import YOLO
 import ultralytics
 
+
+class BaseDetection:
+    def __init__(self, th, max_object_size, show):
+        self.show = show
+        self.th = th
+        self.max_object_size = max_object_size
+
+    def filter_objects_by_size(self, image, objects):
+
+        height, width = image.size
+        image_size = height * width
+
+        keep_objects = []
+        for o in objects:
+            object_image = o[0]
+            object_height, object_width = object_image.size
+            object_size = object_height * object_width
+
+            if image_size * self.max_object_size > object_size:
+
+                keep_objects.append(o)
+            else:
+                print("----------- REMOVED OBJECT --------")
+                print(f"{o}")
+        return keep_objects
+
+
 ##########################################################################################
 ##########################################################################################
 
-# WORK IN PROGRESS
-class YoloV8ObjectDetection:
-    def __init__(self, th, show):
-        print("[EXPERIMENTAL] - [DETECTION] - Using Yolo V8 Object Detection Backend")
+
+class YoloV8ObjectDetection(BaseDetection):
+    def __init__(self, th, max_object_size, show):
+        print("[DETECTION] - Using Yolo V8 Object Detection Backend")
         ultralytics.checks()
         self.show = show
         self.th = th
+        self.max_object_size = max_object_size
         self.model = YOLO("yolov8n.pt")
 
     def detect_all_objects(self, image, one_object):
         # Step 1: Detect all objects in image
         object_boxes = self.detect_objects_in_images(image)
-        pass
+
+        # Step 2: Crop all objects in the image
+        objects = self.crop_objects_found(image, object_boxes)
+
+        # Step 3: Filter invalid objects
+        objects = self.filter_objects_by_size(image, objects)
+
+        if self.show:
+            self.plot_results(image, object_boxes)
+
+        if one_object:
+            print("[DETECTOR] - Set for one_object=True")
+            sorted_objects = sorted(objects, key=lambda x: x[3], reverse=True)
+            best_object = sorted_objects[0]
+            objects = [best_object]
+            print(
+                f"[DETECTOR] - Returning only best object - Name:{best_object[2]} - Score:{best_object[3]}"
+            )
+
+        return objects
 
     def detect_objects_in_images(self, image):
-        results = self.model.predict(source=image)
-        print(len(results))
-        results[0].boxes
-        return results
+        results = self.model.predict(source=image, conf=self.th)
+        found_objects = []
+        for object_found in results[0]:
+            element = object_found.boxes
+            boxes = [max(0, round(int(b))) for b in list(object_found.boxes.xyxy[0])]
+            confidence = float(element.conf[0])
+            cls = int(element.cls[0])
+            name = object_found.names[cls]
+            found_objects.append((boxes, confidence, name))
+        return found_objects
 
     def crop_objects_found(self, image, boxes):
-        pass
+        image_objects = []
+        for box, score, name in boxes:
+            img_object = image.crop(box)
+            image_objects.append((img_object, box, name, score))
+        return image_objects
 
     def plot_results(self, pil_img, boxes):
-        pass
+        img = pil_img.copy()
+        for box, _, _ in boxes:
+            xmin, ymin, xmax, ymax = box
+            draw = D.Draw(img)
+            draw.rectangle([(xmin, ymin), (xmax, ymax)])
+        img.show()
 
 
 ##########################################################################################
 ##########################################################################################
 
 
-class YoloV5ObjectDetection:
-    def __init__(self, th, show):
+class YoloV5ObjectDetection(BaseDetection):
+    def __init__(self, th, max_object_size, show):
         print("[DETECTION] - Using Yolo V5 Object Detection Backend")
         self.show = show
         self.th = th
+        self.max_object_size = max_object_size
         self.processor = YolosFeatureExtractor.from_pretrained("hustvl/yolos-small")
         self.model = YolosForObjectDetection.from_pretrained("hustvl/yolos-small")
 
@@ -60,6 +123,9 @@ class YoloV5ObjectDetection:
 
         # Step 2: Crop all objects in the image
         objects = self.crop_objects_found(image, object_boxes)
+
+        # Step 3: Filter invalid objects
+        objects = self.filter_objects_by_size(image, objects)
 
         if one_object:
             print("[DETECTOR] - Set for one_object=True")
@@ -117,11 +183,12 @@ class YoloV5ObjectDetection:
 ##########################################################################################
 
 
-class DETRObjectDetection:
-    def __init__(self, th, show):
+class DETRObjectDetection(BaseDetection):
+    def __init__(self, th, max_object_size, show):
         print("[DETECTION] - Using DETR Object Detection Backend")
         self.show = show
         self.th = th
+        self.max_object_size = max_object_size
         self.processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
         self.model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
 
@@ -134,6 +201,18 @@ class DETRObjectDetection:
 
         # Step 2: Crop all objects in the image
         objects = self.crop_objects_found(image, object_boxes)
+
+        # Step 3: Filter invalid objects
+        objects = self.filter_objects_by_size(image, objects)
+
+        if one_object:
+            print("[DETECTOR] - Set for one_object=True")
+            sorted_objects = sorted(objects, key=lambda x: x[3], reverse=True)
+            best_object = sorted_objects[0]
+            objects = [best_object]
+            print(
+                f"[DETECTOR] - Returning only best object - Name:{best_object[2]} - Score:{best_object[3]}"
+            )
         return objects
 
     def detect_objects_in_images(self, image):

@@ -61,10 +61,11 @@ if __name__ == "__main__":
     manipulator = Manipulator()
     camera = Camera()
     sumba = Sumba(
-        detector_id="detr",
-        detector_th=0.8,
-        detector_one_object=False,
-        segmentator_id="maskformer",
+        detector_id="yolov8",
+        detector_th=0.05,
+        detector_max_object_size=0.1,
+        segmentator_id="yolov8",
+        segmentator_min_mask_size=0.3,
         grasping_N=50,
         grasping_tol=5,
         show=True,
