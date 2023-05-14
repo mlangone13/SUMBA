@@ -47,7 +47,7 @@ class YoloV8ObjectDetection(BaseDetection):
         self.show = show
         self.th = th
         self.max_object_size = max_object_size
-        self.model = YOLO("yolov8n.pt")
+        self.model = YOLO("yolov8x.pt")
 
     def detect_all_objects(self, image, one_object):
         # Step 1: Detect all objects in image

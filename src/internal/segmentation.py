@@ -19,7 +19,7 @@ class YoloV8Segmentation:
         print("[SEGMENTATION] - Using Yolo V8 Segmentation Backend")
         ultralytics.checks()
         self.show = show
-        self.model = YOLO("yolov8n-seg.pt")
+        self.model = YOLO("yolov8x-seg.pt")
         self.min_mask_size = min_mask_size
 
     def segment_object(self, first_object):
