@@ -47,7 +47,7 @@ class YoloV8Segmentation:
         image_size = height * width
 
         for id, segmented_object in enumerate(results[0]):
-            segment_object_size = np.sum(segmented_object.masks.data.numpy())
+            segment_object_size = np.sum(segmented_object.cpu().masks.data.numpy())
 
             if segment_object_size > self.min_mask_size * image_size:
                 element = segmented_object.boxes
@@ -62,7 +62,7 @@ class YoloV8Segmentation:
         return 0, name
 
     def process_mask(self, results, label_id):
-        src_seg = np.array(results[0].masks.data[label_id])
+        src_seg = np.array(results[0].cpu().masks.data[label_id])
         src_gray = np.uint8(src_seg)
         src_gray[src_gray == 1] = 255
         return src_gray

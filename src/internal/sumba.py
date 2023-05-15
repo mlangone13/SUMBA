@@ -132,6 +132,7 @@ class Sumba:
                 print(f"!!! ------------ Error ------------ !!!")
                 print(f" Exception: {e}")
                 print("")
+                #raise(e)
 
         # ------------------------------------------------------------
         # -------------------- FINAL VISUALIZATION

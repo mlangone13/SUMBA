@@ -59,6 +59,7 @@ class Camera:
 
     def change_channel(self, color_image):
         img = Image.fromarray(color_image[:, :, ::-1])
+        return img
 
     def project_points(self, object, depth_image):
         x, y, x1, y1 = object[1]

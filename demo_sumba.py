@@ -55,6 +55,8 @@ def run_demo(manipulator, camera, sumba):
             print(" Select another key to continue...")
 
         print_initial_configuration()
+        input_value = input()
+
 
 
 if __name__ == "__main__":

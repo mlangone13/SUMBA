@@ -62,7 +62,7 @@ class YoloV8ObjectDetection(BaseDetection):
         if self.show:
             self.plot_results(image, object_boxes)
 
-        if one_object:
+        if one_object and len(objects) > 0:
             print("[DETECTOR] - Set for one_object=True")
             sorted_objects = sorted(objects, key=lambda x: x[3], reverse=True)
             best_object = sorted_objects[0]

@@ -45,7 +45,7 @@ class Manipulator:
         pass
 
     def execute_manipulation(self, result, ang):
-        pose = list(result) + [ang, 50, 0]
+        pose = list(result) + [ang, 60, 0]
         above_pose = pose.copy()
         above_pose[2] -= 0.10
 
