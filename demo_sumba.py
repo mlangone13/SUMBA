@@ -2,6 +2,7 @@ from src.internal.sumba import Sumba
 from src.external.manipulation import Manipulator
 from src.external.camera import Camera
 
+import time
 
 def print_initial_configuration():
     print(
@@ -36,6 +37,8 @@ def run_demo(manipulator, camera, sumba):
 
             print(" ******* Running pipeline with multiple image taken *******")
 
+            initial_time = time.time()
+
             more_objects = True
 
             while more_objects:
@@ -50,6 +53,9 @@ def run_demo(manipulator, camera, sumba):
                     manipulator.execute_manipulation(result, ang)
 
                 more_objects = len(points) > 0
+                print ("Partial run time: ", time.time()-initial_time)
+            
+            print ("Total run time: ", time.time()-initial_time)
 
         else:
             print(" Select another key to continue...")
@@ -64,7 +70,7 @@ if __name__ == "__main__":
     camera = Camera()
     sumba = Sumba(
         detector_id="yolov8",
-        detector_th=0.05,
+        detector_th=0.1,
         detector_max_object_size=0.1,
         segmentator_id="yolov8",
         segmentator_min_mask_size=0.3,

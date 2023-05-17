@@ -53,7 +53,10 @@ class Manipulator:
 
         go_to(pose)
 
+
         move_gripper(self.close_gripper)
+
+        go_to(above_pose)
 
         go_to(self.home)
 
