@@ -58,7 +58,6 @@ def run_demo(manipulator, camera, sumba):
         input_value = input()
 
 
-
 if __name__ == "__main__":
     manipulator = Manipulator()
     camera = Camera()
