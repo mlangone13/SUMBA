@@ -1,0 +1,18 @@
+# Python bytecode files
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Checkpoints
+*.ckpt
+checkpoints/
+*.checkpoint
+# macOS system files
+.DS_Store
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Model weights
+*.pt
